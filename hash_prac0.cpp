@@ -4,6 +4,7 @@
 
 typedef struct plan_t_
 {
+	int unique;
 	char name[MAX_STR_LEN];
 	int val;
 	struct plan_t_ *prev;
@@ -12,7 +13,6 @@ typedef struct plan_t_
 
 typedef struct hash_t_
 {
-	int unique;
 	char key[MAX_STR_LEN];
 	struct plan_t_ *hnext;
 	struct plan_t_ *hprev;
