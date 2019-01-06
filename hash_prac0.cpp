@@ -18,13 +18,6 @@ typedef struct plan_t_
 	struct plan_t_ *next;
 }plan_t;
 
-typedef struct hash_t_
-{
-	char key[MAX_STR_LEN];
-	struct plan_t_ *next;
-	struct plan_t_ *prev;
-}hash_t;
-
 typedef struct grp_t_
 {
 	plan_t head[MAX_NUM_HASH];
@@ -57,7 +50,7 @@ int find_hash(grp_t *g, const char *target)
 
 	for (i = 0; i < 200; i++)
 	{
-		dest = &g->hash[i].key[0];
+		dest = &g->head[i].name[0];
 		if (mystrcmp(dest, target) == 0)
 		{
 			ret = i;
@@ -78,6 +71,7 @@ int add_plan(int idx)
 	plan_t *p;
 	grp_t *g;
 	char *g_str;
+	plan_t *head;
 
 	p = (plan_t *)malloc(sizeof(plan_t));
 	grp_id = in_grpid[idx];
@@ -88,7 +82,7 @@ int add_plan(int idx)
 	mystrcpy(str_tmp, &in_name[0][0]);
 
 	hash_tmp = myhash(str_tmp);
-	g_str = &g->hash[hash_tmp].key[0];
+	g_str = &g->head[hash_tmp].name[0];
 
 	if ((is_first_item(g_str) != 1) && (hash_verify(g_str, str_tmp) != 1))
 	{
@@ -99,9 +93,8 @@ int add_plan(int idx)
 	{
 		mystrcpy(g_str, str_tmp);
 	}
-
-	list_add(g, p);
-
+	head = &g->head[hash_tmp];
+	list_add(head, p);
 	return ret;
 }
 
@@ -143,7 +136,7 @@ int is_first_item(const char *str)
 	return ret;
 }
 
-void list_add(hash_t *head, plan_t *target)
+void list_add(plan_t *head, plan_t *target)
 {
 	target->prev = head;
 	target->next = head->next;
