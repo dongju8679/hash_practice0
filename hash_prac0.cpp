@@ -21,13 +21,13 @@ typedef struct plan_t_
 typedef struct hash_t_
 {
 	char key[MAX_STR_LEN];
-	struct plan_t_ *hnext;
-	struct plan_t_ *hprev;
+	struct plan_t_ *next;
+	struct plan_t_ *prev;
 }hash_t;
 
 typedef struct grp_t_
 {
-	hash_t hash[MAX_NUM_HASH];
+	plan_t head[MAX_NUM_HASH];
 }grp_t;
 
 int N;
@@ -90,16 +90,17 @@ int add_plan(int idx)
 	hash_tmp = myhash(str_tmp);
 	g_str = &g->hash[hash_tmp].key[0];
 
-	if (is_first_item(g_str) == 1)
+	if ((is_first_item(g_str) != 1) && (hash_verify(g_str, str_tmp) != 1))
 	{
+		hash_tmp = find_hash(g, str_tmp);
+	}
 
+	if (g_str[0] == NULL)
+	{
+		mystrcpy(g_str, str_tmp);
 	}
-	else{
-		if (hash_verify(g_str, str_tmp) != 1)
-		{
-			hash_tmp = find_hash(g, str_tmp);
-		}
-	}
+
+	list_add(g, p);
 
 	return ret;
 }
@@ -137,12 +138,12 @@ int is_first_item(const char *str)
 	int ret = 0;
 	if (str[0] == '\0')
 	{
-
+		ret = 1;
 	}
 	return ret;
 }
 
-void list_add(plan_t *head, plan_t *target)
+void list_add(hash_t *head, plan_t *target)
 {
 	target->prev = head;
 	target->next = head->next;
@@ -166,12 +167,13 @@ int _init()
 	int i, j;
 	grp_t *g_ptr;
 	g_ptr = &grp[0];
-	hash_t *hash;
+	plan_t *head;
 	for (i = 0; i < 10; i++) {
-		hash = (g_ptr + i)->hash;
+		head = (g_ptr + i)->head;
 		for (j = 0; j < 200; j++) {
-			(hash + j)->hnext = NULL;
-			(hash + j)->hprev = NULL;
+			(head + j)->next = NULL;
+			(head + j)->prev = NULL;
+			(head + j)->name[0] = '\0';
 		}
 	}
 	return ret;
